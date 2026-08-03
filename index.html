@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DN VANS — Rising Soon</title>
+<meta name="description" content="DN VANS is rising. Something new is on its way.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sky-top:#08080D;
+    --sky-mid:#111119;
+    --sky-low:#1A1622;
+    --sun-core:#E8C99A;
+    --sun-glow:#C9915A;
+    --ink:#F2F1EF;
+    --ink-muted:#83808C;
+    --line: rgba(242,241,239,0.10);
+    --focus:#E8C99A;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
+  }
+
+  html,body{ height:100%; }
+
+  body{
+    font-family:'Inter', sans-serif;
+    color:var(--ink);
+    background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 55%, var(--sky-low) 100%);
+    min-height:100vh;
+    overflow-x:hidden;
+    position:relative;
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* Starfield */
+  .stars{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+  }
+  .star{
+    position:absolute; width:2px; height:2px; background:var(--ink);
+    border-radius:50%; opacity:0.6;
+    animation: twinkle 4s ease-in-out infinite;
+  }
+  @keyframes twinkle{
+    0%,100%{ opacity:0.15; }
+    50%{ opacity:0.9; }
+  }
+
+  /* Horizon + sun */
+  .horizon-wrap{
+    position:fixed; left:0; right:0; bottom:0; height:60vh; z-index:1;
+    pointer-events:none; overflow:hidden;
+  }
+  .sun{
+    position:absolute; left:50%; bottom:-140px;
+    width:260px; height:260px; border-radius:50%;
+    transform:translateX(-50%);
+    background: radial-gradient(circle at 50% 42%, var(--sun-core) 0%, var(--sun-glow) 62%, rgba(201,145,90,0) 78%);
+    animation: rise 9s ease-in-out infinite alternate, pulse-glow 4s ease-in-out infinite;
+  }
+  .sun::after{
+    content:'';
+    position:absolute; inset:-1px; border-radius:50%;
+    border:1px solid rgba(242,241,239,0.18);
+  }
+  @keyframes rise{
+    0%{ bottom:-160px; }
+    100%{ bottom:-90px; }
+  }
+  @keyframes pulse-glow{
+    0%,100%{ box-shadow: 0 0 70px 24px rgba(201,145,90,0.14); }
+    50%{ box-shadow: 0 0 100px 36px rgba(201,145,90,0.22); }
+  }
+  .horizon-line{
+    position:absolute; left:0; right:0; bottom:22vh; height:1px;
+    background: linear-gradient(90deg, transparent, var(--line) 20%, var(--line) 80%, transparent);
+    z-index:2;
+  }
+  .ground{
+    position:absolute; left:0; right:0; bottom:0; height:22vh;
+    background: linear-gradient(180deg, rgba(18,16,42,0) 0%, var(--sky-top) 90%);
+    z-index:3;
+  }
+
+  /* Layout */
+  header{
+    position:relative; z-index:5;
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 28px clamp(20px, 5vw, 56px);
+  }
+  .brand{
+    font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:1rem;
+    letter-spacing:0.01em;
+    display:flex; align-items:center; gap:10px;
+  }
+  .brand-mark{
+    width:7px; height:7px; border-radius:50%;
+    background: var(--sun-core);
+    box-shadow:0 0 10px 2px rgba(232,201,154,0.5);
+  }
+
+  main{
+    position:relative; z-index:5;
+    flex:1;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center;
+    padding: 20px clamp(20px, 6vw, 56px) 80px;
+  }
+
+  .eyebrow{
+    font-size:0.78rem; letter-spacing:0.22em; text-transform:uppercase;
+    color:var(--ink-muted); margin-bottom:22px;
+    opacity:0; animation: fade-up 0.9s ease forwards 0.1s;
+  }
+
+  h1{
+    font-family:'Space Grotesk', sans-serif; font-weight:600;
+    font-size: clamp(2.4rem, 6.4vw, 4.6rem);
+    line-height:1.06; letter-spacing:-0.02em;
+    max-width:16ch;
+    color:var(--ink);
+    opacity:0; animation: fade-up 0.9s ease forwards 0.28s;
+  }
+  h1 span{ color:var(--sun-core); }
+
+  .sub{
+    margin-top:22px; font-size:clamp(1rem, 1.6vw, 1.15rem);
+    color:var(--ink-muted); max-width:46ch; line-height:1.6;
+    opacity:0; animation: fade-up 0.9s ease forwards 0.46s;
+  }
+
+  @keyframes fade-up{
+    from{ opacity:0; transform:translateY(18px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  /* Game */
+  .game-wrap{
+    margin-top:50px; width:100%; max-width:520px;
+    opacity:0; animation: fade-up 0.9s ease forwards 0.62s;
+  }
+  .game-hud{
+    display:flex; align-items:center; justify-content:center; gap:28px;
+    margin-bottom:14px; font-size:0.85rem; color:var(--ink-muted);
+  }
+  .game-hud b{
+    font-family:'Space Grotesk', sans-serif; font-weight:600; color:var(--ink); font-size:1.05rem;
+    font-variant-numeric:tabular-nums;
+  }
+  .game-board{
+    position:relative; width:100%; height:260px;
+    border:1px solid var(--line); border-radius:14px;
+    background:rgba(242,241,239,0.03);
+    overflow:hidden; cursor:crosshair;
+    touch-action:manipulation;
+  }
+  .spark{
+    position:absolute; width:30px; height:30px; border-radius:50%;
+    background: radial-gradient(circle at 38% 32%, var(--ink) 0%, var(--sun-core) 35%, var(--sun-glow) 85%);
+    box-shadow:0 0 14px 2px rgba(201,145,90,0.4);
+    border:1px solid rgba(242,241,239,0.25);
+    padding:0; cursor:pointer;
+    animation: spark-in 0.15s ease;
+  }
+  @keyframes spark-in{
+    from{ transform:scale(0.3); opacity:0; }
+    to{ transform:scale(1); opacity:1; }
+  }
+  .spark:active{ transform:scale(0.85); }
+  .game-overlay{
+    position:absolute; inset:0; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:14px;
+    background:rgba(18,16,42,0.55); backdrop-filter:blur(2px);
+    text-align:center; padding:20px;
+  }
+  .game-overlay p{ color:var(--ink-muted); font-size:0.85rem; max-width:34ch; }
+  .game-overlay .result{
+    font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:1.3rem; color:var(--ink); letter-spacing:-0.01em;
+  }
+  .play-btn{
+    padding:12px 26px; border-radius:8px; border:1px solid transparent; cursor:pointer;
+    font-family:'Inter',sans-serif; font-weight:600; font-size:0.86rem;
+    letter-spacing:0.01em;
+    background: var(--sun-core);
+    color:#141014;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .play-btn:hover{ background:#F2D9AE; transform:translateY(-1px); }
+  .play-btn:focus-visible{ outline:2px solid var(--focus); outline-offset:3px; }
+  .game-caption{
+    margin-top:12px; font-size:0.75rem; color:var(--ink-muted); letter-spacing:0.02em;
+  }
+
+  footer{
+    position:relative; z-index:5;
+    display:flex; align-items:center; justify-content:center;
+    padding:24px; font-size:0.8rem; color:var(--ink-muted);
+  }
+</style>
+</head>
+<body>
+
+  <div class="stars" id="stars"></div>
+  <div class="horizon-wrap">
+    <div class="sun"></div>
+    <div class="horizon-line"></div>
+    <div class="ground"></div>
+  </div>
+
+  <header>
+    <div class="brand"><span class="brand-mark"></span>DN VANS <span style="color:var(--ink-muted); font-family:'Inter',sans-serif; font-weight:400; font-size:0.7rem; margin-left:2px;">(not the final logo)</span></div>
+  </header>
+
+  <main>
+    <p class="eyebrow">Something is rising</p>
+    <h1>We're almost&nbsp;<span>live</span>.</h1>
+    <p class="sub">DN VANS is on its way. While we finish building, catch a few sparks.</p>
+
+    <div class="game-wrap">
+      <div class="game-hud">
+        <span>Score <b id="score">0</b></span>
+        <span>Best <b id="best">0</b></span>
+        <span>Time <b id="time">20</b></span>
+      </div>
+      <div class="game-board" id="board">
+        <div class="game-overlay" id="overlay">
+          <p class="result" id="result-text">Catch the sparks</p>
+          <p>Click the glowing sparks before they fade. 20 seconds, see how many you can catch.</p>
+          <button class="play-btn" id="play-btn">Play</button>
+        </div>
+      </div>
+      <p class="game-caption">Just a little something to pass the time until launch.</p>
+    </div>
+  </main>
+
+  <footer>
+    <span>© 2026 DN VANS</span>
+  </footer>
+
+<script>
+  // Stars
+  const starsContainer = document.getElementById('stars');
+  const starCount = window.innerWidth < 600 ? 40 : 80;
+  for(let i=0;i<starCount;i++){
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.left = Math.random()*100 + '%';
+    s.style.top = Math.random()*70 + '%';
+    s.style.animationDelay = (Math.random()*4) + 's';
+    s.style.width = s.style.height = (Math.random()*1.5+1) + 'px';
+    starsContainer.appendChild(s);
+  }
+
+  // Spark Tap — small click game, no data leaves the browser, resets on refresh
+  (function(){
+    const board = document.getElementById('board');
+    const overlay = document.getElementById('overlay');
+    const resultText = document.getElementById('result-text');
+    const playBtn = document.getElementById('play-btn');
+    const scoreEl = document.getElementById('score');
+    const bestEl = document.getElementById('best');
+    const timeEl = document.getElementById('time');
+
+    const ROUND_SECONDS = 20;
+    const SPARK_LIFETIME = 1400;
+    let score = 0, best = 0, timeLeft = ROUND_SECONDS;
+    let roundTimer = null, spawnTimer = null, playing = false;
+
+    function spawnSpark(){
+      board.querySelectorAll('.spark').forEach(s => s.remove());
+      const spark = document.createElement('button');
+      spark.className = 'spark';
+      spark.setAttribute('aria-label', 'Spark');
+      const bw = board.clientWidth, bh = board.clientHeight;
+      const size = 30;
+      const x = Math.random() * (bw - size - 16) + 8;
+      const y = Math.random() * (bh - size - 16) + 8;
+      spark.style.left = x + 'px';
+      spark.style.top = y + 'px';
+
+      const fadeOut = setTimeout(() => {
+        spark.remove();
+        if(playing) spawnSpark();
+      }, SPARK_LIFETIME);
+
+      spark.addEventListener('click', () => {
+        clearTimeout(fadeOut);
+        spark.remove();
+        score++;
+        scoreEl.textContent = score;
+        if(playing) spawnSpark();
+      });
+
+      board.appendChild(spark);
+    }
+
+    function endRound(){
+      playing = false;
+      clearInterval(roundTimer);
+      clearTimeout(spawnTimer);
+      board.querySelectorAll('.spark').forEach(s => s.remove());
+      if(score > best){ best = score; bestEl.textContent = best; }
+      resultText.textContent = 'Score: ' + score;
+      overlay.querySelector('p:not(.result)').textContent = score >= best && score > 0
+        ? 'New best! Play again?'
+        : 'Nice run. Play again?';
+      playBtn.textContent = 'Play again';
+      overlay.style.display = 'flex';
+    }
+
+    function startRound(){
+      score = 0; timeLeft = ROUND_SECONDS;
+      scoreEl.textContent = score;
+      timeEl.textContent = timeLeft;
+      overlay.style.display = 'none';
+      playing = true;
+      spawnSpark();
+      roundTimer = setInterval(() => {
+        timeLeft--;
+        timeEl.textContent = timeLeft;
+        if(timeLeft <= 0) endRound();
+      }, 1000);
+    }
+
+    playBtn.addEventListener('click', startRound);
+  })();
+</script>
+</body>
+</html>
