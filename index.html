@@ -5,35 +5,41 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DN VANS — Rising Soon</title>
 <meta name="description" content="DN VANS is rising. Something new is on its way.">
+<meta name="theme-color" content="#07070B">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<noscript><style>.ov-btn{ display:none; }</style></noscript>
 <style>
   :root{
-    --sky-top:#08080D;
-    --sky-mid:#111119;
-    --sky-low:#1A1622;
-    --sun-core:#E8C99A;
-    --sun-glow:#C9915A;
-    --ink:#F2F1EF;
-    --ink-muted:#83808C;
-    --line: rgba(242,241,239,0.10);
-    --focus:#E8C99A;
+    --night:#07070B;
+    --dusk:#15111D;
+    --ember:#F0D3A0;
+    --amber:#D08A4E;
+    --haze:#6F6A99;
+    --ink:#F4F2EE;
+    --ink-muted:#9A97A6;
+    --line:rgba(244,242,238,0.10);
+    --focus:#F0D3A0;
+    --font-display:'Bricolage Grotesque', system-ui, sans-serif;
+    --font-body:'Instrument Sans', system-ui, sans-serif;
+    --font-mono:'JetBrains Mono', ui-monospace, monospace;
   }
 
   *{ box-sizing:border-box; margin:0; padding:0; }
+  [hidden]{ display:none !important; }
 
   @media (prefers-reduced-motion: reduce){
     *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
   }
 
-  html,body{ height:100%; }
+  html{ height:100%; }
 
   body{
-    font-family:'Inter', sans-serif;
+    font-family:var(--font-body);
     color:var(--ink);
-    background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 55%, var(--sky-low) 100%);
-    min-height:100vh;
+    background: linear-gradient(180deg, var(--night) 0%, #0D0B13 55%, var(--dusk) 100%);
+    min-height:100vh; min-height:100dvh;
     overflow-x:hidden;
     position:relative;
     display:flex;
@@ -41,9 +47,7 @@
   }
 
   /* Starfield */
-  .stars{
-    position:fixed; inset:0; z-index:0; pointer-events:none;
-  }
+  .stars{ position:fixed; inset:0; z-index:0; pointer-events:none; }
   .star{
     position:absolute; width:2px; height:2px; background:var(--ink);
     border-radius:50%; opacity:0.6;
@@ -54,86 +58,119 @@
     50%{ opacity:0.9; }
   }
 
-  /* Horizon + sun */
+  /* Horizon + sun. Finished game rounds raise --lift, which lifts the sun. */
   .horizon-wrap{
-    position:fixed; left:0; right:0; bottom:0; height:60vh; z-index:1;
+    position:fixed; left:0; right:0; bottom:0; height:60vh; height:60dvh; z-index:1;
     pointer-events:none; overflow:hidden;
+    --lift:0px;
   }
+  .horizon-wrap::before{
+    content:''; position:absolute; inset:0;
+    background:
+      radial-gradient(70% 55% at 50% 100%, rgba(208,138,78,0.20), transparent 70%),
+      radial-gradient(60% 50% at 85% 100%, rgba(111,106,153,0.20), transparent 70%),
+      radial-gradient(50% 45% at 12% 100%, rgba(111,106,153,0.12), transparent 70%);
+  }
+  /* Only transform/opacity are animated so the sun stays on the compositor */
   .sun{
-    position:absolute; left:50%; bottom:-140px;
+    position:absolute; left:50%; bottom:calc(-160px + var(--lift));
     width:260px; height:260px; border-radius:50%;
     transform:translateX(-50%);
-    background: radial-gradient(circle at 50% 42%, var(--sun-core) 0%, var(--sun-glow) 62%, rgba(201,145,90,0) 78%);
-    animation: rise 9s ease-in-out infinite alternate, pulse-glow 4s ease-in-out infinite;
+    background: radial-gradient(circle at 50% 42%, var(--ember) 0%, var(--amber) 62%, rgba(208,138,78,0) 78%);
+    animation: rise 9s ease-in-out infinite alternate;
+    transition: bottom 1.4s cubic-bezier(.2,.7,.2,1);
+  }
+  .sun::before{
+    content:'';
+    position:absolute; inset:0; border-radius:50%;
+    box-shadow: 0 0 100px 36px rgba(208,138,78,0.22);
+    animation: pulse-glow 4s ease-in-out infinite;
   }
   .sun::after{
     content:'';
     position:absolute; inset:-1px; border-radius:50%;
-    border:1px solid rgba(242,241,239,0.18);
+    border:1px solid rgba(244,242,238,0.18);
   }
   @keyframes rise{
-    0%{ bottom:-160px; }
-    100%{ bottom:-90px; }
+    0%{ transform:translate(-50%, 0); }
+    100%{ transform:translate(-50%, -70px); }
   }
   @keyframes pulse-glow{
-    0%,100%{ box-shadow: 0 0 70px 24px rgba(201,145,90,0.14); }
-    50%{ box-shadow: 0 0 100px 36px rgba(201,145,90,0.22); }
+    0%,100%{ opacity:0.64; }
+    50%{ opacity:1; }
   }
   .horizon-line{
-    position:absolute; left:0; right:0; bottom:22vh; height:1px;
+    position:absolute; left:0; right:0; bottom:22vh; bottom:22dvh; height:1px;
     background: linear-gradient(90deg, transparent, var(--line) 20%, var(--line) 80%, transparent);
     z-index:2;
   }
   .ground{
-    position:absolute; left:0; right:0; bottom:0; height:22vh;
-    background: linear-gradient(180deg, rgba(18,16,42,0) 0%, var(--sky-top) 90%);
+    position:absolute; left:0; right:0; bottom:0; height:22vh; height:22dvh;
+    background: linear-gradient(180deg, rgba(7,7,11,0) 0%, var(--night) 90%);
     z-index:3;
   }
 
-  /* Layout */
+  /* Header */
   header{
     position:relative; z-index:5;
     display:flex; align-items:center; justify-content:space-between;
-    padding: 28px clamp(20px, 5vw, 56px);
+    padding: 26px clamp(20px, 5vw, 56px);
   }
   .brand{
-    font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:1rem;
-    letter-spacing:0.01em;
+    font-family:var(--font-display); font-weight:700; font-size:1.05rem;
+    letter-spacing:-0.01em;
     display:flex; align-items:center; gap:10px;
   }
   .brand-mark{
-    width:7px; height:7px; border-radius:50%;
-    background: var(--sun-core);
-    box-shadow:0 0 10px 2px rgba(232,201,154,0.5);
+    width:8px; height:8px; border-radius:50%;
+    background: var(--ember);
+    box-shadow:0 0 12px 3px rgba(240,211,160,0.45);
   }
+  .status{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:7px 13px; border:1px solid var(--line); border-radius:999px;
+    background:rgba(244,242,238,0.04);
+    font-family:var(--font-mono); font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--ink-muted);
+  }
+  .status-dot{
+    width:6px; height:6px; border-radius:50%; background:var(--ember);
+    animation: blink 2.4s ease-in-out infinite;
+  }
+  @keyframes blink{ 0%,100%{ opacity:1; } 50%{ opacity:0.3; } }
 
+  /* Layout */
   main{
     position:relative; z-index:5;
-    flex:1;
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    text-align:center;
-    padding: 20px clamp(20px, 6vw, 56px) 80px;
+    flex:1; width:100%; max-width:1160px; margin:0 auto;
+    display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,0.95fr);
+    gap:clamp(32px, 6vw, 88px); align-items:center;
+    padding: 12px clamp(20px, 5vw, 56px) 72px;
+  }
+  @media (max-width: 900px){
+    main{ grid-template-columns:1fr; gap:36px; align-items:start; padding-bottom:56px; }
   }
 
   .eyebrow{
-    font-size:0.78rem; letter-spacing:0.22em; text-transform:uppercase;
+    display:flex; align-items:center; gap:12px;
+    font-family:var(--font-mono); font-size:0.74rem; letter-spacing:0.18em; text-transform:uppercase;
     color:var(--ink-muted); margin-bottom:22px;
     opacity:0; animation: fade-up 0.9s ease forwards 0.1s;
   }
+  .eyebrow::before{ content:''; width:28px; height:1px; background:var(--ember); }
 
   h1{
-    font-family:'Space Grotesk', sans-serif; font-weight:600;
-    font-size: clamp(2.4rem, 6.4vw, 4.6rem);
-    line-height:1.06; letter-spacing:-0.02em;
-    max-width:16ch;
-    color:var(--ink);
+    font-family:var(--font-display); font-weight:700;
+    font-size: clamp(2.9rem, 7.4vw, 5.8rem);
+    line-height:0.98; letter-spacing:-0.04em;
+    max-width:10ch;
     opacity:0; animation: fade-up 0.9s ease forwards 0.28s;
   }
-  h1 span{ color:var(--sun-core); }
+  h1 span{ color:var(--ember); }
 
   .sub{
-    margin-top:22px; font-size:clamp(1rem, 1.6vw, 1.15rem);
-    color:var(--ink-muted); max-width:46ch; line-height:1.6;
+    margin-top:26px; font-size:clamp(1.02rem, 1.6vw, 1.2rem);
+    color:var(--ink-muted); max-width:40ch; line-height:1.6;
     opacity:0; animation: fade-up 0.9s ease forwards 0.46s;
   }
 
@@ -141,32 +178,93 @@
     from{ opacity:0; transform:translateY(18px); }
     to{ opacity:1; transform:translateY(0); }
   }
+  @keyframes fade-in{ from{ opacity:0; } to{ opacity:1; } }
 
-  /* Game */
-  .game-wrap{
-    margin-top:50px; width:100%; max-width:520px;
+  /* Arcade */
+  .arcade{
+    width:100%; max-width:520px; justify-self:end;
+    padding:12px;
+    border:1px solid var(--line); border-radius:22px;
+    background:rgba(14,12,20,0.58);
+    backdrop-filter:blur(18px) saturate(1.2); -webkit-backdrop-filter:blur(18px) saturate(1.2);
+    box-shadow:0 30px 80px -30px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.06);
     opacity:0; animation: fade-up 0.9s ease forwards 0.62s;
   }
-  .game-hud{
-    display:flex; align-items:center; justify-content:center; gap:28px;
-    margin-bottom:14px; font-size:0.85rem; color:var(--ink-muted);
+  @media (max-width: 900px){ .arcade{ justify-self:start; } }
+
+  .tabs{
+    display:grid; grid-template-columns:repeat(4, 1fr); gap:4px;
+    padding:4px; border-radius:14px; background:rgba(244,242,238,0.05);
   }
-  .game-hud b{
-    font-family:'Space Grotesk', sans-serif; font-weight:600; color:var(--ink); font-size:1.05rem;
+  .tab{
+    min-height:44px; padding:9px 4px; border:0; border-radius:10px; cursor:pointer;
+    font-family:var(--font-body); font-weight:500; font-size:0.84rem;
+    color:var(--ink-muted); background:transparent;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .tab:hover{ color:var(--ink); }
+  .tab[aria-selected="true"]{ background:var(--ember); color:#17111A; font-weight:600; }
+  .tab:focus-visible{ outline:2px solid var(--focus); outline-offset:2px; }
+
+  .hud{
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;
+    padding:16px 8px 14px; text-align:center;
+  }
+  .stat{ display:flex; flex-direction:column; gap:4px; }
+  .stat-label{
+    font-family:var(--font-mono); font-size:0.66rem; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--ink-muted);
+  }
+  .stat-val{
+    font-family:var(--font-mono); font-weight:500; font-size:1.2rem; color:var(--ink);
     font-variant-numeric:tabular-nums;
   }
-  .game-board{
-    position:relative; width:100%; height:260px;
+
+  .stage{
+    position:relative; width:100%; aspect-ratio:4 / 3;
     border:1px solid var(--line); border-radius:14px;
-    background:rgba(242,241,239,0.03);
-    overflow:hidden; cursor:crosshair;
-    touch-action:manipulation;
+    background:rgba(0,0,0,0.30);
+    overflow:hidden;
   }
+  .stage[data-game="sparks"]{ cursor:crosshair; }
+  .field{ position:absolute; inset:0; }
+
+  .overlay{
+    position:absolute; inset:0; z-index:2;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px;
+    padding:20px; text-align:center;
+    background:rgba(7,7,11,0.66); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px);
+    animation: fade-in 0.25s ease;
+  }
+  .ov-title{
+    font-family:var(--font-display); font-weight:700; font-size:1.6rem; letter-spacing:-0.02em;
+  }
+  .ov-text{ color:var(--ink-muted); font-size:0.9rem; line-height:1.5; max-width:34ch; }
+  .ov-btn{
+    margin-top:6px; min-height:44px; padding:12px 28px; border-radius:999px; border:0; cursor:pointer;
+    font-family:var(--font-body); font-weight:600; font-size:0.9rem;
+    background:var(--ember); color:#17111A;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .ov-btn:hover{ background:#F7DFB4; transform:translateY(-1px); }
+  .ov-btn:focus-visible{ outline:2px solid var(--focus); outline-offset:3px; }
+
+  .arcade-note{
+    margin-top:12px; padding:0 6px 4px;
+    font-size:0.78rem; line-height:1.5; color:var(--ink-muted);
+  }
+
+  .sr-only{
+    position:absolute; width:1px; height:1px; overflow:hidden;
+    clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap;
+  }
+
+  /* Game: Sparks */
   .spark{
-    position:absolute; width:30px; height:30px; border-radius:50%;
-    background: radial-gradient(circle at 38% 32%, var(--ink) 0%, var(--sun-core) 35%, var(--sun-glow) 85%);
-    box-shadow:0 0 14px 2px rgba(201,145,90,0.4);
-    border:1px solid rgba(242,241,239,0.25);
+    position:absolute; width:34px; height:34px; border-radius:50%;
+    background: radial-gradient(circle at 38% 32%, var(--ink) 0%, var(--ember) 35%, var(--amber) 85%);
+    box-shadow:0 0 16px 3px rgba(208,138,78,0.4);
+    border:1px solid rgba(244,242,238,0.25);
     padding:0; cursor:pointer;
     animation: spark-in 0.15s ease;
   }
@@ -175,29 +273,56 @@
     to{ transform:scale(1); opacity:1; }
   }
   .spark:active{ transform:scale(0.85); }
-  .game-overlay{
-    position:absolute; inset:0; display:flex; flex-direction:column;
-    align-items:center; justify-content:center; gap:14px;
-    background:rgba(18,16,42,0.55); backdrop-filter:blur(2px);
-    text-align:center; padding:20px;
+  .spark:focus-visible{ outline:2px solid var(--focus); outline-offset:3px; }
+
+  /* Game: Memory */
+  .memory{
+    position:absolute; inset:0; padding:10px;
+    display:grid; grid-template-columns:repeat(4, 1fr); grid-template-rows:repeat(4, 1fr); gap:8px;
   }
-  .game-overlay p{ color:var(--ink-muted); font-size:0.85rem; max-width:34ch; }
-  .game-overlay .result{
-    font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:1.3rem; color:var(--ink); letter-spacing:-0.01em;
+  .card{
+    position:relative; display:flex; align-items:center; justify-content:center;
+    border:1px solid var(--line); border-radius:10px; cursor:pointer;
+    background:rgba(244,242,238,0.06); color:var(--ember);
+    font-size:clamp(1.2rem, 4.6vw, 1.8rem); line-height:1;
+    transition: background 0.2s ease, border-color 0.2s ease;
   }
-  .play-btn{
-    padding:12px 26px; border-radius:8px; border:1px solid transparent; cursor:pointer;
-    font-family:'Inter',sans-serif; font-weight:600; font-size:0.86rem;
-    letter-spacing:0.01em;
-    background: var(--sun-core);
-    color:#141014;
-    transition: transform 0.15s ease, background 0.15s ease;
+  .card::after{
+    content:''; position:absolute; width:5px; height:5px; border-radius:50%;
+    background:var(--ink-muted); opacity:0.5;
   }
-  .play-btn:hover{ background:#F2D9AE; transform:translateY(-1px); }
-  .play-btn:focus-visible{ outline:2px solid var(--focus); outline-offset:3px; }
-  .game-caption{
-    margin-top:12px; font-size:0.75rem; color:var(--ink-muted); letter-spacing:0.02em;
+  .card-face{ opacity:0; transform:scale(0.6); transition: opacity 0.2s ease, transform 0.2s ease; }
+  .card:hover:not(.is-open):not(.is-matched){ background:rgba(244,242,238,0.11); }
+  .card.is-open, .card.is-matched{ background:rgba(240,211,160,0.14); border-color:rgba(240,211,160,0.4); }
+  .card.is-open::after, .card.is-matched::after{ display:none; }
+  .card.is-open .card-face, .card.is-matched .card-face{ opacity:1; transform:scale(1); }
+  .card.is-matched{ cursor:default; background:rgba(240,211,160,0.07); }
+  .card:focus-visible{ outline:2px solid var(--focus); outline-offset:2px; }
+
+  /* Game: Reflex */
+  .reflex{
+    position:absolute; inset:0; width:100%;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+    border:0; cursor:pointer; color:var(--ink); background:transparent;
+    font-family:var(--font-display); user-select:none; -webkit-user-select:none;
+    touch-action:manipulation;
   }
+  .reflex-round{
+    font-family:var(--font-mono); font-weight:500; font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--ink-muted);
+  }
+  .reflex-text{
+    padding:0 18px; font-weight:700; font-size:clamp(1.4rem, 5vw, 2rem); letter-spacing:-0.02em; line-height:1.15;
+  }
+  .reflex.is-wait{ background:radial-gradient(circle at 50% 120%, rgba(111,106,153,0.25), transparent 65%); }
+  .reflex.is-go{ background:radial-gradient(circle at 50% 50%, var(--ember), var(--amber) 90%); color:#17111A; }
+  .reflex.is-go .reflex-round{ color:rgba(23,17,26,0.7); }
+  .reflex.is-early{ background:rgba(190,80,70,0.24); }
+  .reflex.is-shown{ background:rgba(240,211,160,0.08); }
+  .reflex:focus-visible{ outline:2px solid var(--focus); outline-offset:-4px; }
+
+  /* Game: Snake */
+  .snake{ position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none; }
 
   footer{
     position:relative; z-index:5;
@@ -209,36 +334,50 @@
 <body>
 
   <div class="stars" id="stars"></div>
-  <div class="horizon-wrap">
+  <div class="horizon-wrap" id="horizon">
     <div class="sun"></div>
     <div class="horizon-line"></div>
     <div class="ground"></div>
   </div>
 
   <header>
-    <div class="brand"><span class="brand-mark"></span>DN VANS <span style="color:var(--ink-muted); font-family:'Inter',sans-serif; font-weight:400; font-size:0.7rem; margin-left:2px;">(not the final logo)</span></div>
+    <div class="brand"><span class="brand-mark"></span>DN VANS</div>
+    <span class="status"><span class="status-dot"></span>Launching soon</span>
   </header>
 
   <main>
-    <p class="eyebrow">Something is rising</p>
-    <h1>We're almost&nbsp;<span>live</span>.</h1>
-    <p class="sub">DN VANS is on its way. While we finish building, catch a few sparks.</p>
+    <section class="hero">
+      <p class="eyebrow">Something is rising</p>
+      <h1>We're almost&nbsp;<span>live</span>.</h1>
+      <p class="sub">DN VANS is on its way. While we finish building, pick a game and play a round.</p>
+    </section>
 
-    <div class="game-wrap">
-      <div class="game-hud">
-        <span>Score <b id="score">0</b></span>
-        <span>Best <b id="best">0</b></span>
-        <span>Time <b id="time">20</b></span>
+    <section class="arcade" aria-label="Games">
+      <div class="tabs" role="tablist" aria-label="Choose a game">
+        <button class="tab" role="tab" type="button" id="tab-sparks" data-game="sparks" aria-controls="stage" aria-selected="true">Sparks</button>
+        <button class="tab" role="tab" type="button" id="tab-memory" data-game="memory" aria-controls="stage" aria-selected="false" tabindex="-1">Memory</button>
+        <button class="tab" role="tab" type="button" id="tab-reflex" data-game="reflex" aria-controls="stage" aria-selected="false" tabindex="-1">Reflex</button>
+        <button class="tab" role="tab" type="button" id="tab-snake" data-game="snake" aria-controls="stage" aria-selected="false" tabindex="-1">Snake</button>
       </div>
-      <div class="game-board" id="board">
-        <div class="game-overlay" id="overlay">
-          <p class="result" id="result-text">Catch the sparks</p>
-          <p>Click the glowing sparks before they fade. 20 seconds, see how many you can catch.</p>
-          <button class="play-btn" id="play-btn">Play</button>
+
+      <div class="hud">
+        <div class="stat"><span class="stat-label"></span><span class="stat-val"></span></div>
+        <div class="stat"><span class="stat-label"></span><span class="stat-val"></span></div>
+        <div class="stat"><span class="stat-label"></span><span class="stat-val"></span></div>
+      </div>
+
+      <div class="stage" id="stage" role="tabpanel" aria-labelledby="tab-sparks">
+        <div class="field" id="field"></div>
+        <div class="overlay" id="overlay">
+          <p class="ov-title" id="ov-title">Catch the sparks</p>
+          <p class="ov-text" id="ov-text"></p>
+          <button class="ov-btn" id="ov-btn" type="button">Play</button>
+          <noscript><p class="ov-text">The games need JavaScript turned on.</p></noscript>
         </div>
       </div>
-      <p class="game-caption">Just a little something to pass the time until launch.</p>
-    </div>
+      <p class="sr-only" id="sr-status" role="status" aria-live="polite"></p>
+      <p class="arcade-note">Every finished round lifts the sun a little. Best scores stay on this device.</p>
+    </section>
   </main>
 
   <footer>
@@ -259,78 +398,499 @@
     starsContainer.appendChild(s);
   }
 
-  // Spark Tap — small click game, no data leaves the browser, resets on refresh
+  // Arcade — four small games, nothing leaves the browser. Best scores are kept in localStorage.
   (function(){
-    const board = document.getElementById('board');
-    const overlay = document.getElementById('overlay');
-    const resultText = document.getElementById('result-text');
-    const playBtn = document.getElementById('play-btn');
-    const scoreEl = document.getElementById('score');
-    const bestEl = document.getElementById('best');
-    const timeEl = document.getElementById('time');
+    const $ = id => document.getElementById(id);
+    const store = {
+      get(k){ try{ return JSON.parse(localStorage.getItem('dnvans.' + k)); }catch(e){ return null; } },
+      set(k, v){ try{ localStorage.setItem('dnvans.' + k, JSON.stringify(v)); }catch(e){} }
+    };
 
-    const ROUND_SECONDS = 20;
-    const SPARK_LIFETIME = 1400;
-    let score = 0, best = 0, timeLeft = ROUND_SECONDS;
-    let roundTimer = null, spawnTimer = null, playing = false;
+    const field = $('field'), stage = $('stage'), overlay = $('overlay');
+    const ovTitle = $('ov-title'), ovText = $('ov-text'), ovBtn = $('ov-btn');
+    const srStatus = $('sr-status'), horizon = $('horizon');
+    const labels = [...document.querySelectorAll('.stat-label')];
+    const values = [...document.querySelectorAll('.stat-val')];
+    const tabs = [...document.querySelectorAll('.tab')];
+    const MAX_LIFT = 90;
+    let lift = 0, current = null;
 
-    function spawnSpark(){
-      board.querySelectorAll('.spark').forEach(s => s.remove());
-      const spark = document.createElement('button');
-      spark.className = 'spark';
-      spark.setAttribute('aria-label', 'Spark');
-      const bw = board.clientWidth, bh = board.clientHeight;
-      const size = 30;
-      const x = Math.random() * (bw - size - 16) + 8;
-      const y = Math.random() * (bh - size - 16) + 8;
-      spark.style.left = x + 'px';
-      spark.style.top = y + 'px';
+    // What each game is allowed to do to the shared panel
+    const ctx = {
+      field,
+      stats(list){ list.forEach((v, i) => { values[i].textContent = v; }); },
+      stat(i, v){ values[i].textContent = v; },
+      loadBest(id){ return store.get('best.' + id); },
+      saveBest(id, v){ store.set('best.' + id, v); },
+      finish({ title, text, announce }){
+        lift = Math.min(lift + 15, MAX_LIFT);
+        horizon.style.setProperty('--lift', lift + 'px');
+        showOverlay(title, text, 'Play again');
+        srStatus.textContent = announce || title;
+        ovBtn.focus({ preventScroll:true });
+      }
+    };
 
-      const fadeOut = setTimeout(() => {
-        spark.remove();
-        if(playing) spawnSpark();
-      }, SPARK_LIFETIME);
+    function showOverlay(title, text, btn){
+      ovTitle.textContent = title;
+      ovText.textContent = text;
+      ovBtn.textContent = btn;
+      overlay.hidden = false;
+    }
 
-      spark.addEventListener('click', () => {
-        clearTimeout(fadeOut);
-        spark.remove();
-        score++;
-        scoreEl.textContent = score;
-        if(playing) spawnSpark();
+    /* ---------- Sparks ---------- */
+    function sparks(ctx){
+      const ROUND = 20, LIFE = 1400, SIZE = 34;
+      let score = 0, timeLeft = ROUND, roundTimer = null, fadeTimer = null, playing = false;
+      const best = () => ctx.loadBest('sparks') || 0;
+
+      function idle(){ ctx.stats([0, best(), ROUND]); }
+
+      function spawn(){
+        clearTimeout(fadeTimer);
+        ctx.field.querySelectorAll('.spark').forEach(s => s.remove());
+        const spark = document.createElement('button');
+        spark.className = 'spark';
+        spark.type = 'button';
+        spark.setAttribute('aria-label', 'Spark');
+        const bw = ctx.field.clientWidth, bh = ctx.field.clientHeight;
+        spark.style.left = (Math.random() * (bw - SIZE - 16) + 8) + 'px';
+        spark.style.top = (Math.random() * (bh - SIZE - 16) + 8) + 'px';
+
+        fadeTimer = setTimeout(() => {
+          spark.remove();
+          if(playing) spawn();
+        }, LIFE);
+
+        spark.addEventListener('click', () => {
+          score++;
+          ctx.stat(0, score);
+          if(playing) spawn(); else spark.remove();
+        });
+
+        ctx.field.appendChild(spark);
+        // Keep focus on the live spark so keyboard players can keep tapping
+        spark.focus({ preventScroll:true });
+      }
+
+      function stop(){
+        playing = false;
+        clearInterval(roundTimer);
+        clearTimeout(fadeTimer);
+        ctx.field.replaceChildren();
+      }
+
+      function end(){
+        stop();
+        const prev = best();
+        const isBest = score > prev;
+        if(isBest){ ctx.saveBest('sparks', score); ctx.stat(1, score); }
+        ctx.finish({
+          title: 'Score: ' + score,
+          text: isBest ? 'New best! Play again?' : 'Nice run. Play again?',
+          announce: 'Time is up. You scored ' + score + (isBest ? ', a new best.' : '.')
+        });
+      }
+
+      function start(){
+        stop();
+        score = 0; timeLeft = ROUND;
+        ctx.stats([0, best(), ROUND]);
+        playing = true;
+        spawn();
+        roundTimer = setInterval(() => {
+          timeLeft--;
+          ctx.stat(2, timeLeft);
+          if(timeLeft <= 0) end();
+        }, 1000);
+      }
+
+      return { idle, start, stop };
+    }
+
+    /* ---------- Memory ---------- */
+    function memory(ctx){
+      const CARDS = [
+        ['☀︎', 'Sun'], ['☾', 'Moon'], ['★', 'Star'], ['◆', 'Diamond'],
+        ['●', 'Circle'], ['▲', 'Triangle'], ['✦', 'Spark'], ['♥︎', 'Heart']
+      ];
+      let timer = null, flipTimer = null, locked = false, first = null, moves = 0, matched = 0, secs = 0;
+      const best = () => ctx.loadBest('memory');
+      const showBest = () => best() || '–';
+
+      function idle(){ ctx.stats([0, showBest(), '0s']); }
+
+      function shuffle(a){
+        for(let i = a.length - 1; i > 0; i--){
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+
+      function label(btn, open){
+        btn.setAttribute('aria-label', 'Card ' + btn.dataset.n + ', ' + (open ? btn.dataset.name : 'face down'));
+      }
+
+      function start(){
+        stop();
+        moves = 0; matched = 0; secs = 0; first = null; locked = false;
+        ctx.stats([0, showBest(), '0s']);
+        const grid = document.createElement('div');
+        grid.className = 'memory';
+        shuffle(CARDS.concat(CARDS)).forEach((c, i) => {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'card';
+          b.dataset.n = i + 1;
+          b.dataset.key = c[0];
+          b.dataset.name = c[1];
+          const face = document.createElement('span');
+          face.className = 'card-face';
+          face.setAttribute('aria-hidden', 'true');
+          face.textContent = c[0];
+          b.append(face);
+          label(b, false);
+          b.addEventListener('click', () => flip(b));
+          grid.append(b);
+        });
+        ctx.field.append(grid);
+        grid.firstChild.focus({ preventScroll:true });
+        timer = setInterval(() => { secs++; ctx.stat(2, secs + 's'); }, 1000);
+      }
+
+      function flip(b){
+        if(locked || b.classList.contains('is-open') || b.classList.contains('is-matched')) return;
+        b.classList.add('is-open');
+        label(b, true);
+        if(!first){ first = b; return; }
+        moves++;
+        ctx.stat(0, moves);
+        if(first.dataset.key === b.dataset.key){
+          [first, b].forEach(x => { x.classList.remove('is-open'); x.classList.add('is-matched'); });
+          first = null;
+          matched++;
+          if(matched === CARDS.length) win();
+        } else {
+          locked = true;
+          const a = first;
+          first = null;
+          flipTimer = setTimeout(() => {
+            [a, b].forEach(x => { x.classList.remove('is-open'); label(x, false); });
+            locked = false;
+          }, 700);
+        }
+      }
+
+      function win(){
+        clearInterval(timer);
+        const prev = best();
+        const isBest = !prev || moves < prev;
+        if(isBest){ ctx.saveBest('memory', moves); ctx.stat(1, moves); }
+        ctx.finish({
+          title: moves + ' moves',
+          text: isBest ? 'New best. Fewest moves yet.' : 'Cleared in ' + secs + ' seconds. Beat ' + prev + ' moves to set a new best.',
+          announce: 'Board cleared in ' + moves + ' moves' + (isBest ? ', a new best.' : '.')
+        });
+      }
+
+      function stop(){
+        clearInterval(timer);
+        clearTimeout(flipTimer);
+        ctx.field.replaceChildren();
+      }
+
+      return { idle, start, stop };
+    }
+
+    /* ---------- Reflex ---------- */
+    function reflex(ctx){
+      const ROUNDS = 5;
+      let times = [], state = 'idle', timer = null, t0 = 0, btn = null, roundEl = null, textEl = null;
+      const best = () => ctx.loadBest('reflex');
+      const showBest = () => best() ? best() + ' ms' : '–';
+
+      function idle(){ ctx.stats(['0/' + ROUNDS, showBest(), '–']); }
+
+      function paint(cls, round, text){
+        btn.className = 'reflex ' + cls;
+        roundEl.textContent = round;
+        textEl.textContent = text;
+      }
+
+      const upcoming = () => 'Round ' + (times.length + 1) + ' of ' + ROUNDS;
+
+      function start(){
+        stop();
+        times = [];
+        ctx.stats(['0/' + ROUNDS, showBest(), '–']);
+        btn = document.createElement('button');
+        btn.type = 'button';
+        roundEl = document.createElement('span');
+        roundEl.className = 'reflex-round';
+        textEl = document.createElement('span');
+        textEl.className = 'reflex-text';
+        btn.append(roundEl, textEl);
+        // pointerdown skips the wait for pointerup; click with detail 0 covers the keyboard
+        btn.addEventListener('pointerdown', e => {
+          if(e.pointerType === 'mouse' && e.button !== 0) return;
+          tap();
+        });
+        btn.addEventListener('click', e => { if(e.detail === 0) tap(); });
+        ctx.field.append(btn);
+        btn.focus({ preventScroll:true });
+        next();
+      }
+
+      function next(){
+        state = 'wait';
+        paint('is-wait', upcoming(), 'Wait for the glow…');
+        timer = setTimeout(() => {
+          state = 'go';
+          t0 = performance.now();
+          paint('is-go', upcoming(), 'Now!');
+        }, 1200 + Math.random() * 2300);
+      }
+
+      function tap(){
+        if(state === 'wait'){
+          clearTimeout(timer);
+          state = 'early';
+          paint('is-early', upcoming(), 'Too early. Wait for the glow.');
+          timer = setTimeout(next, 1200);
+        } else if(state === 'go'){
+          const ms = Math.round(performance.now() - t0);
+          times.push(ms);
+          state = 'shown';
+          ctx.stat(0, times.length + '/' + ROUNDS);
+          ctx.stat(2, ms + ' ms');
+          paint('is-shown', 'Round ' + times.length + ' of ' + ROUNDS, ms + ' ms');
+          timer = setTimeout(times.length === ROUNDS ? done : next, 1000);
+        }
+      }
+
+      function done(){
+        state = 'idle';
+        const avg = Math.round(times.reduce((a, b) => a + b, 0) / times.length);
+        const prev = best();
+        const isBest = !prev || avg < prev;
+        if(isBest){ ctx.saveBest('reflex', avg); ctx.stat(1, avg + ' ms'); }
+        ctx.finish({
+          title: avg + ' ms average',
+          text: isBest ? 'New best reaction time.' : 'Fastest round: ' + Math.min(...times) + ' ms. Beat ' + prev + ' ms to set a new best.',
+          announce: 'Average reaction time ' + avg + ' milliseconds' + (isBest ? ', a new best.' : '.')
+        });
+      }
+
+      function stop(){
+        clearTimeout(timer);
+        state = 'idle';
+        ctx.field.replaceChildren();
+      }
+
+      return { idle, start, stop };
+    }
+
+    /* ---------- Snake ---------- */
+    function snake(ctx){
+      const COLS = 20, ROWS = 15;
+      const KEYS = {
+        ArrowUp:[0,-1], w:[0,-1], W:[0,-1], ArrowDown:[0,1], s:[0,1], S:[0,1],
+        ArrowLeft:[-1,0], a:[-1,0], A:[-1,0], ArrowRight:[1,0], d:[1,0], D:[1,0]
+      };
+      const css = getComputedStyle(document.documentElement);
+      const color = n => css.getPropertyValue(n).trim();
+      let canvas = null, g = null, body = [], dir = [1,0], queue = [], food = null;
+      let score = 0, level = 1, timer = null, playing = false, swipe = null;
+      const best = () => ctx.loadBest('snake') || 0;
+
+      function idle(){ ctx.stats([0, best(), 1]); }
+
+      function placeFood(){
+        do {
+          food = { x: Math.floor(Math.random() * COLS), y: Math.floor(Math.random() * ROWS) };
+        } while(body.some(s => s.x === food.x && s.y === food.y));
+      }
+
+      function turn(d){
+        const last = queue.length ? queue[queue.length - 1] : dir;
+        const reverse = d[0] === -last[0] && d[1] === -last[1];
+        const same = d[0] === last[0] && d[1] === last[1];
+        if(reverse || same || queue.length >= 2) return;
+        queue.push(d);
+      }
+
+      function onKey(e){
+        const d = KEYS[e.key];
+        if(!d || e.metaKey || e.ctrlKey || e.altKey) return;
+        e.preventDefault();
+        turn(d);
+      }
+
+      function onDown(e){ swipe = { x:e.clientX, y:e.clientY }; }
+      function onMove(e){
+        if(!swipe) return;
+        const dx = e.clientX - swipe.x, dy = e.clientY - swipe.y;
+        if(Math.max(Math.abs(dx), Math.abs(dy)) < 22) return;
+        turn(Math.abs(dx) > Math.abs(dy) ? [Math.sign(dx), 0] : [0, Math.sign(dy)]);
+        swipe = { x:e.clientX, y:e.clientY };
+      }
+      function onUp(){ swipe = null; }
+
+      function rect(x, y, w, h, r){
+        g.beginPath();
+        if(g.roundRect) g.roundRect(x, y, w, h, r); else g.rect(x, y, w, h);
+        g.fill();
+      }
+
+      function draw(){
+        g.clearRect(0, 0, COLS, ROWS);
+        g.fillStyle = 'rgba(244,242,238,0.07)';
+        for(let x = 0; x < COLS; x++){
+          for(let y = 0; y < ROWS; y++){
+            g.beginPath();
+            g.arc(x + 0.5, y + 0.5, 0.05, 0, Math.PI * 2);
+            g.fill();
+          }
+        }
+        g.fillStyle = 'rgba(208,138,78,0.28)';
+        g.beginPath(); g.arc(food.x + 0.5, food.y + 0.5, 0.5, 0, Math.PI * 2); g.fill();
+        g.fillStyle = color('--ember');
+        g.beginPath(); g.arc(food.x + 0.5, food.y + 0.5, 0.3, 0, Math.PI * 2); g.fill();
+        body.forEach((s, i) => {
+          g.fillStyle = i === 0 ? color('--ember') : color('--amber');
+          g.globalAlpha = i === 0 ? 1 : Math.max(0.35, 1 - i / (body.length + 6));
+          rect(s.x + 0.07, s.y + 0.07, 0.86, 0.86, 0.28);
+        });
+        g.globalAlpha = 1;
+      }
+
+      const speed = () => Math.max(65, 140 - (level - 1) * 12);
+
+      function step(){
+        if(queue.length) dir = queue.shift();
+        const head = { x: body[0].x + dir[0], y: body[0].y + dir[1] };
+        const eats = head.x === food.x && head.y === food.y;
+        const solid = eats ? body : body.slice(0, -1);
+        if(head.x < 0 || head.x >= COLS || head.y < 0 || head.y >= ROWS || solid.some(s => s.x === head.x && s.y === head.y)){
+          die();
+          return;
+        }
+        body.unshift(head);
+        if(eats){
+          score++;
+          level = 1 + Math.floor(score / 5);
+          ctx.stat(0, score);
+          ctx.stat(2, level);
+          placeFood();
+        } else {
+          body.pop();
+        }
+        draw();
+        timer = setTimeout(step, speed());
+      }
+
+      function die(){
+        detach();
+        const prev = best();
+        const isBest = score > prev;
+        if(isBest){ ctx.saveBest('snake', score); ctx.stat(1, score); }
+        ctx.finish({
+          title: 'Score: ' + score,
+          text: isBest ? 'New best! Play again?' : 'Best is ' + prev + '. Play again?',
+          announce: 'Run over. You scored ' + score + (isBest ? ', a new best.' : '.')
+        });
+      }
+
+      function detach(){
+        playing = false;
+        clearTimeout(timer);
+        window.removeEventListener('keydown', onKey);
+      }
+
+      function start(){
+        stop();
+        canvas = document.createElement('canvas');
+        canvas.className = 'snake';
+        canvas.setAttribute('aria-label', 'Snake board');
+        ctx.field.append(canvas);
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = Math.round(ctx.field.clientWidth * dpr);
+        canvas.height = Math.round(ctx.field.clientHeight * dpr);
+        g = canvas.getContext('2d');
+        g.setTransform(canvas.width / COLS, 0, 0, canvas.height / ROWS, 0, 0);
+
+        body = [{ x:5, y:7 }, { x:4, y:7 }, { x:3, y:7 }];
+        dir = [1, 0]; queue = []; score = 0; level = 1; swipe = null;
+        ctx.stats([0, best(), 1]);
+        placeFood();
+        draw();
+        playing = true;
+        window.addEventListener('keydown', onKey);
+        canvas.addEventListener('pointerdown', onDown);
+        canvas.addEventListener('pointermove', onMove);
+        canvas.addEventListener('pointerup', onUp);
+        canvas.addEventListener('pointercancel', onUp);
+        timer = setTimeout(step, 600);
+      }
+
+      function stop(){
+        detach();
+        ctx.field.replaceChildren();
+      }
+
+      return { idle, start, stop };
+    }
+
+    /* ---------- Panel controller ---------- */
+    const games = [
+      { id:'sparks', make:sparks, labels:['Score', 'Best', 'Time'],
+        title:'Catch the sparks', intro:'Click each spark before it fades. You have 20 seconds.' },
+      { id:'memory', make:memory, labels:['Moves', 'Best', 'Time'],
+        title:'Match the pairs', intro:'Flip two cards at a time. Clear the board in as few moves as you can.' },
+      { id:'reflex', make:reflex, labels:['Round', 'Best avg', 'Last'],
+        title:'Test your reflexes', intro:'Wait for the glow, then tap. Five rounds. Tapping early restarts the round.' },
+      { id:'snake', make:snake, labels:['Score', 'Best', 'Level'],
+        title:'Chase the light', intro:'Steer with the arrow keys or WASD, or swipe on a touch screen. Walls and your own tail end the run.' }
+    ];
+    games.forEach(g => { g.api = g.make(ctx); });
+
+    function select(id){
+      if(current) current.api.stop();
+      current = games.find(g => g.id === id);
+      field.replaceChildren();
+      srStatus.textContent = '';
+      stage.dataset.game = id;
+      stage.setAttribute('aria-labelledby', 'tab-' + id);
+      labels.forEach((l, i) => { l.textContent = current.labels[i]; });
+      current.api.idle();
+      showOverlay(current.title, current.intro, 'Play');
+      tabs.forEach(t => {
+        const on = t.dataset.game === id;
+        t.setAttribute('aria-selected', String(on));
+        t.tabIndex = on ? 0 : -1;
       });
-
-      board.appendChild(spark);
     }
 
-    function endRound(){
-      playing = false;
-      clearInterval(roundTimer);
-      clearTimeout(spawnTimer);
-      board.querySelectorAll('.spark').forEach(s => s.remove());
-      if(score > best){ best = score; bestEl.textContent = best; }
-      resultText.textContent = 'Score: ' + score;
-      overlay.querySelector('p:not(.result)').textContent = score >= best && score > 0
-        ? 'New best! Play again?'
-        : 'Nice run. Play again?';
-      playBtn.textContent = 'Play again';
-      overlay.style.display = 'flex';
-    }
+    ovBtn.addEventListener('click', () => {
+      overlay.hidden = true;
+      srStatus.textContent = '';
+      field.replaceChildren();
+      current.api.start();
+    });
 
-    function startRound(){
-      score = 0; timeLeft = ROUND_SECONDS;
-      scoreEl.textContent = score;
-      timeEl.textContent = timeLeft;
-      overlay.style.display = 'none';
-      playing = true;
-      spawnSpark();
-      roundTimer = setInterval(() => {
-        timeLeft--;
-        timeEl.textContent = timeLeft;
-        if(timeLeft <= 0) endRound();
-      }, 1000);
-    }
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(t.dataset.game));
+      t.addEventListener('keydown', e => {
+        const to = { ArrowRight:(i + 1) % tabs.length, ArrowLeft:(i + tabs.length - 1) % tabs.length, Home:0, End:tabs.length - 1 }[e.key];
+        if(to === undefined) return;
+        e.preventDefault();
+        tabs[to].focus();
+        select(tabs[to].dataset.game);
+      });
+    });
 
-    playBtn.addEventListener('click', startRound);
+    select('sparks');
   })();
 </script>
 </body>
